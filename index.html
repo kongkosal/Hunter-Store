@@ -1,22 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login Page</title>
-  <link rel="stylesheet" href="style.css"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hunter Store</title>
+     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div class="login-container">
-    <h2>Login</h2>
-    <form id="loginForm">
-      <input type="text" id="username" placeholder="Username" required />
-      <input type="password" id="password" placeholder="Password" required />
-      <button type="submit">Login</button>
-      <p id="error-msg"></p>
+<body class="min-h-screen bg-[url('https://images.unsplash.com/photo-1506744038136-46273834b3fb')] bg-cover bg-center bg-no-repeat flex items-center justify-center">
+
+  <div class="w-[380px] bg-white/20 backdrop-blur-xl
+  border border-white/30 rounded-3xl p-8 shadow-2xl text-black">
+
+    <!-- Title -->
+    <h1 id="title" class="text-4xl font-bold text-center mb-8">
+      Login
+    </h1>
+
+    <!-- FORM -->
+    <form id="form">
+
+      <!-- Username -->
+      <div id="usernameBox" class="relative mb-5 hidden">
+        <input
+          id="username"
+          type="text"
+          placeholder="Username"
+          class="w-full bg-transparent border-b border-black
+          outline-none py-3 pr-10 placeholder-black"
+        />
+
+        <ion-icon
+          name="person"
+          class="absolute right-2 top-4 text-lg">
+        </ion-icon>
+      </div>
+
+      <!-- Email -->
+      <div class="relative mb-5">
+        <input
+          id="email"
+          type="email"
+          placeholder="Email"
+          class="w-full bg-transparent border-b border-black
+          outline-none py-3 pr-10 placeholder-black"
+          required
+        />
+
+        <ion-icon
+          name="mail"
+          class="absolute right-2 top-4 text-lg">
+        </ion-icon>
+      </div>
+
+      <!-- Password -->
+      <div class="relative mb-5">
+        <input
+          id="password"
+          type="password"
+          placeholder="Password"
+          class="w-full bg-transparent border-b border-black
+          outline-none py-3 pr-10 placeholder-black"
+          required
+        />
+
+        <ion-icon
+          name="lock-closed"
+          class="absolute right-2 top-4 text-lg">
+        </ion-icon>
+      </div>
+
+      <!-- Button -->
+      <button
+        type="submit"
+        id="submitBtn"
+        class="w-full bg-[#0d1b2a] hover:bg-[#132238]
+        text-white py-3 rounded-lg font-semibold transition">
+        Login
+      </button>
     </form>
+
+    <!-- Switch -->
+    <p class="text-center mt-6 text-sm">
+      <span id="switchText">
+        Don’t have an account?
+      </span>
+
+      <button
+        id="switchBtn"
+        class="font-bold hover:underline">
+        Register
+      </button>
+    </p>
+
+    <!-- Message -->
+    <p id="message" class="text-center mt-4 font-semibold"></p>
+
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    const form = document.getElementById("form");
+    const title = document.getElementById("title");
+    const submitBtn = document.getElementById("submitBtn");
+    const switchBtn = document.getElementById("switchBtn");
+    const switchText = document.getElementById("switchText");
+    const message = document.getElementById("message");
+    const usernameBox = document.getElementById("usernameBox");
+
+    let isLogin = true;
+
+    // SWITCH LOGIN / REGISTER
+    switchBtn.addEventListener("click", () => {
+      isLogin = !isLogin;
+
+      if (isLogin) {
+        title.innerText = "Login";
+        submitBtn.innerText = "Login";
+        switchText.innerText = "Don’t have an account?";
+        switchBtn.innerText = "Register";
+        usernameBox.classList.add("hidden");
+      } else {
+        title.innerText = "Register";
+        submitBtn.innerText = "Create Account";
+        switchText.innerText = "Already have an account?";
+        switchBtn.innerText = "Login";
+        usernameBox.classList.remove("hidden");
+      }
+
+      message.innerText = "";
+    });
+
+    // FORM SUBMIT
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      // REGISTER
+      if (!isLogin) {
+
+        const user = {
+          username,
+          email,
+          password
+        };
+
+        localStorage.setItem("user", JSON.stringify(user));
+
+        message.innerText = "Account Created Successfully!";
+        message.className = "text-green-700 text-center mt-4 font-semibold";
+
+      }
+
+      // LOGIN
+      else {
+
+        const savedUser = JSON.parse(localStorage.getItem("user"));
+
+        if (
+  savedUser &&
+  savedUser.email === email &&
+  savedUser.password === password
+) {
+
+  // SAVE LOGIN USER
+  localStorage.setItem(
+    "loggedInUser",
+    JSON.stringify(savedUser)
+  );
+
+  message.innerText =
+    "Login Successful! Welcome " + savedUser.username;
+
+  message.className =
+    "text-green-700 text-center mt-4 font-semibold";
+
+  // GO TO NEXT PAGE
+  setTimeout(() => {
+    window.location.href = "shop.html";
+  }, 1000);
+
+} else {
+
+  message.innerText = "Invalid Email or Password!";
+
+  message.className =
+    "text-red-700 text-center mt-4 font-semibold";
+}
+      }
+
+      form.reset();
+    });
+  </script>
+
 </body>
 </html>
